@@ -1,0 +1,86 @@
+<project name="msp-viewer" default="launch" basedir=".">
+  <description>
+    MS Project Viewer
+  </description>
+
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="lib" location="lib"/>
+  <property name="sample" location="sample"/>
+  <property name="mui.src.dir" location="../mui/src"/>
+  <property name="build" location="build"/>
+  <property name="dist" location="dist"/>
+  <property name="dist.all" location="${dist}/${ant.project.name}"/>
+  <property name="mui.dst.dir" location="${dist.all}/resources/mui"/>
+  <property name="resources"  location="resources"/>
+  <property name="dist.resources" location="${dist}/resources"/>
+  <property name="dist.lib" location="${dist}/lib"/>
+
+  <property name="browser"          value="chromium-browser"/>
+
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="mui">
+    <delete dir="${mui.dst.dir}"/>
+    <mkdir dir="${mui.dst.dir}"/>
+    <copy todir="${mui.dst.dir}" >
+      <fileset dir="${mui.src.dir}" includes="**"/>
+    </copy>
+  </target>
+
+  <target name="dist" depends="clean,init,mui" description="generate the distribution" >
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist.all}"/>
+
+    <mkdir dir="${dist.all}/lib"/>
+    <copy todir="${dist.all}/lib">
+      <fileset dir="${lib}"/>
+    </copy>
+
+    <mkdir dir="${dist.all}/sample"/>
+    <copy todir="${dist.all}/sample">
+      <fileset dir="${sample}"/>
+    </copy>
+
+    <mkdir dir="${dist.all}/resources"/>
+
+    <mkdir dir="${dist.all}/resources/html"/>
+    <copy todir="${dist.all}/resources/html">
+      <fileset dir="${src}/html"/>
+    </copy>
+
+    <mkdir dir="${dist.all}/resources/js"/>
+    <copy todir="${dist.all}/resources/js">
+      <fileset dir="${src}/js"/>
+    </copy>
+
+    <mkdir dir="${dist.all}/resources/css"/>
+    <copy todir="${dist.all}/resources/css">
+      <fileset dir="${src}/css"/>
+    </copy>
+
+    <mkdir dir="${dist.all}/resources/images"/>
+    <copy todir="${dist.all}/resources/images">
+      <fileset dir="${src}/images"/>
+    </copy>
+
+    <delete file="${dist}/${ant.project.name}.zip"/>
+    <zip destfile="${dist}/${ant.project.name}.zip">
+      <zipfileset dir="${dist}/${ant.project.name}" prefix="${ant.project.name}"/>
+    </zip>
+  </target>
+
+  <target name="launch" depends="dist">
+    <exec executable="${browser}" spawn="true">
+      <arg value="${dist.all}/resources/html/index.html"/>
+    </exec>
+  </target>
+
+  <target name="clean" description="clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>

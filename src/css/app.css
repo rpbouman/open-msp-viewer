@@ -1,0 +1,39 @@
+
+html, head, body {
+  margin: 0px;
+  padding: 0px;
+  font-family: sans-serif;
+  font-size: 10pt;
+}
+
+div.toolbar > div.open {
+  background-image: url("../images/folder_open_16.png");
+}
+
+div.toolbar > div.ganttchart {
+  background-image: url("../images/1407718371_application_side_tree.png");
+}
+
+div.toolbar > div.resources {
+  background-image: url("../images/1407718490_kdb_table.png");
+}
+
+div.toolbar > div.project {
+  background-image: url("../images/Actions-view-calendar-timeline-icon.png");
+}
+
+div.toolbar > div.year {
+  background-image: url("../images/Actions-view-calendar-list-icon.png");
+}
+
+div.toolbar > div.month {
+  background-image: url("../images/Actions-view-calendar-month-icon.png");
+}
+
+div.toolbar > div.week {
+  background-image: url("../images/Actions-view-calendar-week-icon.png");
+}
+
+div.toolbar > div.day {
+  background-image: url("../images/Actions-view-calendar-day-icon.png");
+}

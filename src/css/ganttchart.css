@@ -1,0 +1,703 @@
+div.gant-t-chart-splitpane {
+}
+
+div.gant-t-chart-contentpane {
+  overflow: hidden;
+}
+
+div.gant-t-chart-contentpane table {
+  border-collapse: collapse;
+}
+
+tr.task > td, tr.task > th {
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-right: 2px;
+}
+
+tr.task > td {
+  border-color: whitesmoke;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+/**
+* TASK PANE
+**/
+div.gant-t-chart-taskpane {
+
+}
+
+div.gant-t-chart-taskpane-tasks-header {
+  position: absolute;
+  top: 0px;
+  height: 41px;
+  padding: 2px;
+  vertical-align: middle;
+  border-style: solid;
+  border-width: 1px;
+  border-color: whitesmoke;
+  background-color: #dceef9;
+  z-index: 10;
+}
+
+div.gant-t-chart-taskpane-tasks {
+  position: absolute;
+  top: 47px;
+}
+
+table.gant-t-chart-taskpane-tasks-table {
+}
+
+table.gant-t-chart-taskpane-tasks-table > tbody > tr.task > td,
+table.gant-t-chart-taskpane-attributes-table  > tbody > tr.task > td {
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+tr.task > td.task-identity {
+  text-align: right;
+  border-style: none solid solid solid;
+  border-width: 1px;
+}
+
+tr.task > td.task-label {
+}
+
+tr.task > td.task-label > span.task-toggle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin-left: -14px;
+}
+
+tr.task-Summary0 > td.task-label > span.task-toggle {
+  cursor: default;
+}
+
+tr.task-Summary1 > td.task-label > span.task-toggle {
+  cursor: pointer;
+}
+
+tr.task-expanded > td.task-label > span.task-toggle {
+  background-image: url("../images/toggle-small-icon.png");
+}
+
+tr.task-collapsed > td.task-label > span.task-toggle {
+  background-image: url("../images/toggle-small-expand-icon.png");
+}
+
+tr.task-Summary1 > td.task-label > label {
+  font-weight: bold;
+}
+
+div.gant-t-chart-taskpane-attributes-header {
+  position: absolute;
+  height: 45px;
+  background-color: #dceef9;
+  z-index: 5;
+  border-color: whitesmoke;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  padding: -1px;
+}
+
+div.gant-t-chart-taskpane-attributes-header > div.gant-t-chart-taskpane-attributes-header-item {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  padding: 2px;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: whitesmoke;
+  background-color: #dceef9;
+}
+
+div.gant-t-chart-taskpane-attributes {
+  position: absolute;
+  overflow-x: auto;
+  overflow-y: hidden;
+  top: 47px;
+  bottom: 0px;
+  border-style: none none none solid;
+  border-width: 1px;
+  border-color: whitesmoke;
+}
+
+table.gant-t-chart-taskpane-attributes-table > tbody > tr > td {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: whitesmoke;
+  white-space: nowrap;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+/**
+* CALENDAR PANE
+**/
+div.gant-t-chart-calendarpane {
+}
+
+.gant-t-chart-calendarpane-header {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
+div.gant-t-chart-calendarpane-body {
+  position: absolute;
+  top: 47px;
+  bottom: 0px;
+  z-index: 20;
+  overflow-x: auto;
+  overflow-y: auto;
+  border-bottom-color: #cbdde8;
+  border-bottom-style: solid;
+}
+
+table.gant-t-chart-calendarpane-body-table {
+  border-style: none;
+  border-width: 0px;
+}
+
+/* calender body */
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar {
+  position:absolute;
+  z-index:2;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-left {
+  position:absolute;
+  top: 0px;
+  left: -1px;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-right {
+  position:absolute;
+  top: 0px;
+  right: -1px;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-pct-complete,
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-pct-work-complete,
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-physical-pct-complete {
+  position:absolute;
+  left: 0px;
+  height: 3px;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-pct-complete {
+  top: 0px;
+  background-color: red;
+}
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-pct-work-complete {
+  top: 3px;
+  background-color: green;
+}
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-physical-pct-complete {
+  top: 6px;
+  background-color: blue;
+}
+
+/* not a summary task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Summary0 > td > div.task-bar {
+  margin-top: 2px;
+  border-width: 1px;
+  border-style: solid;
+  height: 9px;
+}
+
+/* not a critical task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Critical0 > td > div.task-bar {
+  border-color: blue;
+  background-color: skyblue;
+}
+
+/* critical task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Critical1 > td > div.task-bar {
+  border-color: red;
+  background-color: pink;
+}
+
+/* summary task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Summary1 > td > div.task-bar {
+  margin-top: 2px;
+  border-width: 1px;
+  border-style: solid;
+  height: 4px;
+  border-color: maroon;
+  background-color: maroon;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Summary1 > td > div.task-bar > div.task-bar-left {
+  width: 0px;
+  height: 0px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid maroon;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Summary1 > td > div.task-bar > div.task-bar-right {
+  width: 0px;
+  height: 0px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid maroon;
+}
+
+/* milestone task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Milestone1 > td > div.task-bar {
+  border-color: transparent;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Milestone1 > td > div.task-bar > div.task-bar-left {
+  top: -2px;
+  width: 0px;
+  height: 0px;
+  left: 0px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 7px solid blue;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Milestone1 > td > div.task-bar > div.task-bar-right {
+  top: -2px;
+  width: 0px;
+  height: 0px;
+  right: 0px;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-right: 7px solid blue;
+}
+
+/* Null task */
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-IsNull1  > td > div.task-bar {
+}
+
+/* calendar headers */
+div.gant-t-calendar-header-item {
+  position: absolute;
+  bottom: 0px;
+}
+
+div.gant-t-calendar-header-item > div.label {
+  position: absolute;
+  height: 15px;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: whitesmoke;
+}
+
+div.gant-t-calendar-header-year {
+  top: 0px;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-right-color: black;
+  z-index: 2; /* ensures months don't block year boundary from showing */
+}
+
+div.gant-t-calendar-header-year > div.label {
+  padding-left: 2px;
+}
+
+div.gant-t-calendar-header-year-odd > div.label{
+  background-color: #dceef9;
+}
+div.gant-t-calendar-header-year-even > div.label {
+  background-color: #baccd7;
+}
+
+div.gant-t-calendar-header-month {
+  top: 15px;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-right-color: darkgrey;
+  z-index: 1; /* ensures days don't block month boundary from showing */
+}
+
+div.gant-t-calendar-header-month > div.label {
+  padding-left: 2px;
+}
+
+div.gant-t-calendar-header-month-odd > div.label {
+  background-color: #dceef9;
+}
+div.gant-t-calendar-header-month-even > div.label {
+  background-color: #baccd7;
+}
+
+div.gant-t-calendar-header-day {
+  top: 30px;
+}
+
+div.gant-t-calendar-header-day-weekstart {
+  border-left-width: 1px;
+  border-left-style: solid;
+  border-left-color: lightgrey;
+}
+
+div.gant-t-calendar-header-day-workday {
+}
+
+div.gant-t-calendar-header-day-noworkday {
+  border-width: 1px;
+  border-style: none dotted none dotted;
+  border-color: lightgrey;
+  background-color:  ghostwhite;
+}
+
+div.gant-t-calendar-header-day > div.label {
+  border-style: solid none solid solid;
+  background-color: white;
+}
+
+div.gant-t-calendar-gridline {
+  position: absolute;
+  top:0px;
+  bottom:0px;
+  width: 1px;
+  height: 100%;
+  background-color: lightgrey;
+}
+
+/* links */
+div.task-predecessor-link {
+  position:absolute;
+  overflow: visible;
+}
+
+/* FF (finish-to-finish) */
+div.task-predecessor-link-type0 {
+}
+
+/* FS (finish-to-start) */
+div.task-predecessor-link-type1 {
+}
+
+/* SF (start-to-finish) */
+div.task-predecessor-link-type2 {
+}
+
+/* SS (start-to-start) */
+div.task-predecessor-link-type3 {
+}
+
+div.task-predecessor-link > div.task-predecessor-link-segment {
+  position:absolute;
+}
+
+/* div.task-predecessor-link-type0-below-left */
+div.task-predecessor-link-type0-below-left > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 10px;
+  right: -10px;
+}
+div.task-predecessor-link-type0-below-left > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  right: -11px;
+  top: 0px;
+  height: 11px;
+}
+div.task-predecessor-link-type0-below-left > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height:1px;
+  right: -10px;
+  top: 10px;
+  left: 0px;
+  right: -10px;
+}
+div.task-predecessor-link-type0-below-left > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  left: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type0-below-left > div.task-predecessor-link-segment5 {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  left: -4px;
+}
+
+/* div.task-predecessor-link-type0-below-right */
+div.task-predecessor-link-type0-below-right > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 8px;
+  left: 0px;
+}
+div.task-predecessor-link-type0-below-right > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  left: 8px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type0-below-right > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: 8px;
+  right: 0px;
+}
+div.task-predecessor-link-type0-below-right > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  right: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type0-below-right > div.task-predecessor-link-segment5 {
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  right: -4px;
+}
+
+/* div.task-predecessor-link-type1-below-left */
+div.task-predecessor-link-type1-below-left > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 10px;
+  right: -10px;
+}
+div.task-predecessor-link-type1-below-left > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  right: -11px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type1-below-left > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: 0px;
+  right: -10px;
+}
+div.task-predecessor-link-type1-below-left > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  left: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type1-below-left > div.task-predecessor-link-segment5 {
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  left: -4px;
+}
+
+/* div.task-predecessor-link-type1-below-right */
+div.task-predecessor-link-type1-below-right > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 8px;
+  left: 0px;
+}
+div.task-predecessor-link-type1-below-right > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  left: 8px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type1-below-right > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: 8px;
+  right: 0px;
+}
+div.task-predecessor-link-type1-below-right > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  right: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type1-below-right > div.task-predecessor-link-segment5 {
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+
+  bottom: 5px;
+  right: -4px;
+}
+
+/* div.task-predecessor-link-type2-below-left */
+div.task-predecessor-link-type2-below-left > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 10px;
+  right: 0px;
+}
+div.task-predecessor-link-type2-below-left > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  right: 10px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type2-below-left > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: 0px;
+  right: 10px;
+}
+div.task-predecessor-link-type2-below-left > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  left: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type2-below-left > div.task-predecessor-link-segment5 {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  left: -4px;
+}
+
+/* div.task-predecessor-link-type2-below-right */
+div.task-predecessor-link-type2-below-right > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 11px;
+  left: -13px;
+}
+div.task-predecessor-link-type2-below-right > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  left: -13px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type2-below-right > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: -13px;
+  right: 0px;
+}
+div.task-predecessor-link-type2-below-right > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  right: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type2-below-right > div.task-predecessor-link-segment5 {
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  right: -4px;
+}
+
+/* div.task-predecessor-link-type3-below-left */
+div.task-predecessor-link-type3-below-left > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 10px;
+  right: 0px;
+}
+div.task-predecessor-link-type3-below-left > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  right: 10px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type3-below-left > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: 0px;
+  right: 10px;
+}
+div.task-predecessor-link-type3-below-left > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  left: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type3-below-left > div.task-predecessor-link-segment5 {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  bottom: 5px;
+  left: -4px;
+}
+
+/* div.task-predecessor-link-type3-below-right */
+div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment1 {
+  background-color:black;
+  height: 1px;
+  width: 10px;
+  left: -13px;
+}
+div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment2 {
+  background-color:black;
+  width: 1px;
+  left: -13px;
+  top: 0px;
+  height: 10px;
+}
+div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment3 {
+  background-color:black;
+  height: 1px;
+  top: 10px;
+  left: -12px;
+  right: 0px;
+}
+div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment4 {
+  background-color:black;
+  top: 10px;
+  width: 1px;
+  right: 0px;
+  bottom: 5px;
+}
+div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment5 {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+
+  bottom: 5px;
+  right: -4px;
+}
