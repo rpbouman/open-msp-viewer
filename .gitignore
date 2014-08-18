@@ -1,0 +1,2 @@
+dist/*
+!dist/msp-viewer.zip
