@@ -146,6 +146,28 @@ function elementToObject(node) {
       }
     }
     return true;
+  },
+  getTaskLinks: function(task) {
+    var links = task.PredecessorLink;
+    if (!links) {
+      links = [];
+    }
+    else
+    if (!iArr(links)){
+      links = [links];
+    }
+    return links;
+  },
+  forEachTaskLink: function(task, callback, scope){
+    if (!scope) scope = this;
+    var i, n, link, links = this.getTaskLinks(task);
+    for (i = 0, n = links.length; i < n; i++) {
+      link = links[i];
+      if (callback.call(scope, link, i) === false) {
+        return false;
+      }
+    }
+    return true;
   }
 };
 

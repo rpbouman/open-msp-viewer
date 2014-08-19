@@ -54,8 +54,9 @@ mainToolbar.listen({
 
 function gotDocument(doc){
   gantEl.style.display = "";
-  gantTChart.setDocument(doc);
+  gantTChart.clear();
   gantTChart.setSplitterPosition("350px");
+  gantTChart.setDocument(doc);
 }
 
 function handleHttpOpen(){

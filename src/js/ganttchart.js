@@ -128,60 +128,57 @@ adopt(GantTChartComponent, ContentPane);
     if (!bodyTable) return;
     var rows = bodyTable.rows;
     var rowIndex = 0;
+    var rowTops = {};
+    function getRowTop(row){
+      var rowTop = rowTops[row.rowIndex];
+      if (typeof(rowTop) === "undefined") {
+        rowTop = row.offsetTop;
+        rowTops[row.rowIndex] = rowTop;
+      }
+      return rowTop;
+    }
 
     mspDocument.forEachTask(function(task, index){
       if (index === 0 && !dontSuppressProjectSummaryTask) return;
       var row = rows[rowIndex++];
-      var cell = row.cells[0];
-      var taskDiv = cell.firstChild;
-
-      if (task.IsNull === "1") {
-        taskDiv.style.width = 0 + "px";
-        return;
+      var rowDisplayed;
+      if (row.style.display === "none") {
+        rowDisplayed = false;
       }
+      else {
+        rowDisplayed = true;
+        var cell = row.cells[0];
+        var taskDiv = cell.firstChild;
 
-      var taskStart = mspDocument.parseDate(task.Start);
-      var taskFinish = mspDocument.parseDate(task.Finish);
-      var diff, w, l, style = taskDiv.style;
-      diff = taskStart - projectDatesAndDimensions.startTime;
-      l = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
-      diff = taskFinish - projectDatesAndDimensions.startTime;
-      w = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
-      style.left = l + "px";
-      style.width = (task.IsNull === "1" ? 0 : (w-l)) + "px";
-
-      var links = task.PredecessorLink, from, to, linkType, aboveBelow, leftRight;
-      var posRow = pos(row, body), posPredecessorRow;
-      if (!links) {
-        return;
-      }
-      else
-      if (!iArr(links)){
-        links = [links];
-      }
-      var link, n = links.length, predecessorRow, i, linkEl, linkId;
-      for (i = 0; i < n; i++){
-        link = links[i];
-        linkType = parseInt(link.Type, 10);
-        predecessorRow = gEl("calendarpane-row-" + link.PredecessorUID);
-
-        //is task below or above its predecessor?
-        aboveBelow = row.rowIndex > predecessorRow.rowIndex ? "below" : "above";
-
-        if (!predecessorRow) {
-          console.log("Whoops, predecessor not found.");
-          continue;
+        if (task.IsNull === "1") {
+          taskDiv.style.width = 0 + "px";
+          return;
         }
-        posPredecessorRow = pos(predecessorRow, body);
-        linkId = "link-task-" + task.UID + "-predecessor-task-" + link.PredecessorUID;
-        linkEl = gEl(linkId);
-        var isNew = false;
-        if (!linkEl) {
+
+        var taskStart = mspDocument.parseDate(task.Start);
+        var taskFinish = mspDocument.parseDate(task.Finish);
+        var diff, w, l, style = taskDiv.style;
+        diff = taskStart - projectDatesAndDimensions.startTime;
+        l = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
+        diff = taskFinish - projectDatesAndDimensions.startTime;
+        w = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
+        style.left = l + "px";
+        style.width = (task.IsNull === "1" ? 0 : (w-l)) + "px";
+
+        //var posRow = pos(row, body);
+        var rowTop = getRowTop(row);
+      }
+      mspDocument.forEachTaskLink(task, function(link, index){
+        var isNew;
+        var linkId = "link-task-" + task.UID + "-predecessor-task-" + link.PredecessorUID;
+        var linkEl = gEl(linkId);
+        if (linkEl) {
+          isNew = false;
+        }
+        else {
           isNew = true;
           linkEl = cEl("div", {
-            id: linkId,
-            "class": "task-predecessor-link" +
-                     " task-predecessor-link-type" + linkType
+            id: linkId
           }, [
             cEl("div", {
               id: linkId + "-segment1",
@@ -210,6 +207,31 @@ adopt(GantTChartComponent, ContentPane);
             })
           ], body);
         }
+        if (!rowDisplayed) {
+          linkEl.style.display = "none";
+          return;
+        }
+        var predecessorRow = gEl("calendarpane-taskUID-" + link.PredecessorUID);
+        if (!predecessorRow) {
+          console.log("Whoops, predecessor not found.");
+          return;
+        }
+        if (predecessorRow.style.display === "none") {
+          linkEl.style.display = "none";
+          return;
+        }
+        else {
+          linkEl.style.display = "";
+        }
+
+        var linkType = parseInt(link.Type, 10);
+
+        //is task below or above its predecessor?
+        var aboveBelow = row.rowIndex > predecessorRow.rowIndex ? "below" : "above";
+        //var posPredecessorRow = pos(predecessorRow, body);
+        var predecessorRowTop = getRowTop(predecessorRow);
+
+        var from;
         switch (linkType) {
           case 0: //FF (finish-to-finish)
           case 1: //FS (finish-to-start)
@@ -221,6 +243,8 @@ adopt(GantTChartComponent, ContentPane);
             break;
           default:
         }
+
+        var to;
         switch (linkType) {
           case 0: //FF (finish-to-finish)
           case 2: //SF (start-to-finish)
@@ -232,9 +256,11 @@ adopt(GantTChartComponent, ContentPane);
             break;
           default:
         }
-        var height = Math.abs(posRow.top - posPredecessorRow.top);
+        //var height = Math.abs(posRow.top - posPredecessorRow.top);
+        var height = Math.abs(rowTop - predecessorRowTop);
         linkEl.style.height = height + "px";
-        var top = Math.min(posRow.top, posPredecessorRow.top);
+        //var top = Math.min(posRow.top, posPredecessorRow.top);
+        var top = Math.min(rowTop, predecessorRowTop);
         linkEl.style.top = parseInt(row.offsetHeight/2 + top, 10) + "px";
         var left, width;
 
@@ -267,13 +293,15 @@ adopt(GantTChartComponent, ContentPane);
           }
         }
         if (isNew) {
-          linkEl.className += " task-predecessor-link-" + aboveBelow +
+          linkEl.className =  "task-predecessor-link" +
+                            " task-predecessor-link-type" + linkType +
+                            " task-predecessor-link-" + aboveBelow +
                             " task-predecessor-link-" + leftRight +
                             " task-predecessor-link-type" +
                             linkType + "-" + aboveBelow + "-" + leftRight
           ;
         }
-      }
+      });
     });
   },
   getProjectDatesAndDimensions: function(){
@@ -302,7 +330,7 @@ adopt(GantTChartComponent, ContentPane);
         ret.startDate = truncateDate(new Date(ret.startTime), "day");
         ret.startTime = ret.startDate.getTime();
 
-        ret.finisTime += extra;
+        ret.finishTime += extra;
         ret.finishDate = truncateDate(dateAdd(new Date(ret.finishTime), {days: 1}), "day");
         ret.finishTime = ret.finishDate.getTime();
 
@@ -531,7 +559,7 @@ adopt(GantTChartComponent, ContentPane);
     var rows = bodyTable.rows;
     var row = bodyTable.insertRow(rows.length);
     sAtts(row, {
-      id: "calendarpane-row-" + task.UID,
+      id: "calendarpane-taskUID-" + task.UID,
       "data-WBS": task.WBS,
       "data-start": mspDocument.parseDate(task.Start),
       "data-finish": mspDocument.parseDate(task.Finish),
@@ -587,8 +615,9 @@ adopt(GantTChartComponent, ContentPane);
     this.renderTasks();
   },
   taskToggled: function(){
+    this.renderTasks();
     this.updateCalendarHeight();
-  },
+  }
 };
 adopt(GantTCalendarPane, GantTChartComponent);
 
@@ -632,6 +661,7 @@ adopt(GantTCalendarPane, GantTChartComponent);
     }
     var cell = target.parentNode;
     var row = cell.parentNode;
+    //this.getGantTChart().toggleTask(row.id.substr("taskpane-taskUID-".length));
     this.getGantTChart().toggleTask(row.rowIndex);
   },
   getAttributesHeader: function(){
@@ -758,7 +788,7 @@ adopt(GantTCalendarPane, GantTChartComponent);
       toggleState = " task-expanded";
     }
     sAtts(row, {
-      id: "taskpane-row-" + task.UID,
+      id: "taskpane-taskUID-" + task.UID,
       "data-WBS": task.WBS,
       "data-OutlineLevel": outlineLevel,
       "class": this.getTaskClassName(task) + toggleState
@@ -788,7 +818,10 @@ adopt(GantTCalendarPane, GantTChartComponent);
     var attributesTable = this.getAttributesTable();
     var rows = attributesTable.rows;
     row = attributesTable.insertRow(rows.length);
-    row.className = "task";
+    sAtts(row, {
+      id: "taskpane-taskUID-" + task.UID,
+      "class": "task"
+    });
     var configuredAttributes = this.getConfiguredAttributes();
     var configuredAttribute, configuredAttributeDef, value;
     for (configuredAttribute in configuredAttributes) {

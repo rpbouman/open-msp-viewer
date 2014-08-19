@@ -172,6 +172,10 @@ table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar {
   z-index:2;
 }
 
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-HideBar1 > td > div.task-bar {
+  visibility: hidden;
+}
+
 table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar > div.task-bar-left {
   position:absolute;
   top: 0px;
