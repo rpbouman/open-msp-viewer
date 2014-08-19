@@ -43,6 +43,67 @@ function elementToObject(node) {
   loadFromDom: function(dom){
     var object = elementToObject(dom);
     this.data = object;
+    this.indexData();
+  },
+  index: function(path, keys, multiple){
+    var array = this.getValueAsArray.apply(this, path);
+    var i, n, object, property, key, value, map, bucket;
+    for (property in keys) {
+      map = {};
+      this[property] = map;
+    }
+    for (i = 0, n = array.length; i < n; i++){
+      object = array[i];
+      for (property in keys) {
+        map = this[property];
+        key = keys[property];
+        value = object[key];
+        if (multiple) {
+          bucket = map[value];
+          if (!bucket) {
+            bucket = [];
+            map[value] = bucket;
+          }
+          bucket.push(object);
+        }
+        else {
+          map[value] = object;
+        }
+      }
+    }
+  },
+  indexTasks: function(){
+    this.index(["Project", "Tasks", "Task"], {
+      tasksByUID: "UID"
+    }, false);
+  },
+  getTaskByUID: function(uid){
+    return this.tasksByUID[uid];
+  },
+  indexResources: function(){
+    this.index(["Project", "Resources", "Resource"], {
+      resourcesByUID: "UID"
+    }, false);
+  },
+  getResourceByUID: function(uid){
+    return this.resourcesByUID[uid];
+  },
+  indexAssignments: function(){
+    this.index(["Project", "Assignments", "Assignment"], {
+      assignmentsByTaskUID: "TaskUID",
+      assignmentsByResourceUID: "ResourceUID",
+    }, true);
+  },
+  getAssignmentsByResourceUID: function(resourceUID){
+    return this.assignmentsByResourceUID[resourceUID];
+  },
+  getAssignmentsByTaskUID: function(taskUID){
+    return this.assignmentsByTaskUID[taskUID];
+  },
+  indexData: function(){
+    this.indexTasks();
+    this.indexResources();
+    this.indexAssignments();
   },
   getValue: function(){
     var value = this.data, argument;
@@ -136,16 +197,11 @@ function elementToObject(node) {
   getTasks: function(){
     return this.getValueAsArray("Project", "Tasks", "Task");
   },
-  forEachTask: function(callback, scope){
-    if (!scope) scope = this;
-    var tasks = this.getTasks();
-    for (var task, i = 0, n = tasks.length; i < n; i++) {
-      task = tasks[i];
-      if (callback.call(scope, task, i) === false) {
-        return false;
-      }
-    }
-    return true;
+  getAssignments: function(){
+    return this.getValueAsArray("Project", "Assignments", "Assignment");
+  },
+  getResources: function(){
+    return this.getValueAsArray("Project", "Resources", "Resource");
   },
   getTaskLinks: function(task) {
     var links = task.PredecessorLink;
@@ -168,6 +224,40 @@ function elementToObject(node) {
       }
     }
     return true;
+  },
+  forEach: function(){
+    var args = arguments, n = args.length, i, arg, path = [];
+    for (i = 0; i < n; i++){
+      arg = args[i];
+      if (iStr(arg)) {
+        path.push(arg);
+      }
+      else {
+        break;
+      }
+    }
+    var array = this.getValueAsArray.apply(this, path);
+    var callback = args[i++];
+    var scope = args[i++];
+    if (!scope) {
+      scope = this;
+    }
+    for (i = 0, n = array.length; i < n; i++){
+      arg = array[i];
+      if (callback.call(scope, arg, i) === false) {
+        return false;
+      }
+    }
+    return true;
+  },
+  forEachTask: function(callback, scope){
+    return this.forEach.apply(this, ["Project", "Tasks", "Task", callback, scope]);
+  },
+  forEachResource: function(callback, scope){
+    return this.forEach.apply(this, ["Project", "Resources", "Resource", callback, scope]);
+  },
+  forEachAssignment: function(callback, scope){
+    return this.forEach.apply(this, ["Project", "Assignements", "Assignment", callback, scope]);
   }
 };
 

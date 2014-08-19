@@ -168,8 +168,8 @@ table.gant-t-chart-calendarpane-body-table {
 
 /* calender body */
 table.gant-t-chart-calendarpane-body-table > tbody > tr > td > div.task-bar {
-  position:absolute;
-  z-index:2;
+  position: absolute;
+  z-index: 2;
 }
 
 table.gant-t-chart-calendarpane-body-table > tbody > tr.task-HideBar1 > td > div.task-bar {
@@ -705,3 +705,25 @@ div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment5
   bottom: 5px;
   right: -4px;
 }
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources {
+  display: inline;
+  position: absolute;
+  list-style: none;
+  margin: 0px;
+  padding-left: 13px;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource {
+  display: inline;
+}
+
+/* would have been great but for IE8.
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource:after {
+  content: ", ";
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource:last-child::after {
+  content: "";
+}
+*/

@@ -165,6 +165,9 @@ adopt(GantTChartComponent, ContentPane);
         style.left = l + "px";
         style.width = (task.IsNull === "1" ? 0 : (w-l)) + "px";
 
+        var resourcesDiv = taskDiv.nextSibling;
+        resourcesDiv.style.left = (l + (w - l)) + "px";
+
         //var posRow = pos(row, body);
         var rowTop = getRowTop(row);
       }
@@ -555,11 +558,12 @@ adopt(GantTChartComponent, ContentPane);
     var gantTChart = this.getGantTChart();
     var mspDocument = gantTChart.getDocument();
     if (suppressProjectSummaryTask && index === 0) return;
+    var taskUID = task.UID;
     var bodyTable = this.getBodyTable();
     var rows = bodyTable.rows;
     var row = bodyTable.insertRow(rows.length);
     sAtts(row, {
-      id: "calendarpane-taskUID-" + task.UID,
+      id: "calendarpane-taskUID-" + taskUID,
       "data-WBS": task.WBS,
       "data-start": mspDocument.parseDate(task.Start),
       "data-finish": mspDocument.parseDate(task.Finish),
@@ -608,6 +612,23 @@ adopt(GantTChartComponent, ContentPane);
       "class": "task-bar",
       title: task.Name,
     }, children, cell);
+    var assignments = mspDocument.getAssignmentsByTaskUID(taskUID);
+    if (assignments) {
+      var resources = cEl("ul", {
+        "class": "task-bar-resources"
+      }, null, cell);
+      var i, n, assignment, resource, label;
+      for (i = 0, n = assignments.length; i < n; i++){
+        assignment = assignments[i];
+        resource = mspDocument.getResourceByUID(assignment.ResourceUID);
+        if (resource) {
+          label = (i ? ", " : "") + resource.Name;
+          cEl("li", {
+            "class": "task-bar-resource"
+          }, label, resources);
+        }
+      }
+    }
     cEl("br", {}, null, cell);
   },
   tasksAdded: function(){
@@ -1026,8 +1047,8 @@ adopt(GantTTaskPane, GantTChartComponent);
     taskPane.tasksAdded();
     calendarPane.tasksAdded();
   },
-  setDocument: function(mspDocument){
-    this.mspDocument = mspDocument;
+  setDocument: function(doc){
+    this.mspDocument = doc;
     this.refresh();
   },
   getDocument: function(){
