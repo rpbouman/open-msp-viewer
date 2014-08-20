@@ -33,6 +33,122 @@ function elementToObject(node) {
   return object;
 }
 
+/*
+http://msdn.microsoft.com/en-us/library/bb968637(v=office.12).aspx
+*/
+var dateFormats = {
+  3: {
+    abbr: "m",
+    name: "minutes",
+    formatter: function(from, to) {
+      return (to - from) / 60 / 1000;
+    }
+  },
+  4: {
+    abbr: "em",
+    name: "elapsed minutes",
+  },
+  5: {
+    abbr: "h",
+    name: "hours",
+    formatter: function(from, to) {
+      return (to - from) / 60 / 60 / 1000;
+    }
+  },
+  6: {
+    abbr: "eh",
+    name: "elapsed hours",
+  },
+  7: {
+    abbr: "d",
+    name: "days",
+    formatter: function(from, to) {
+      return (to - from) / 24 / 60 / 60 / 1000;
+    }
+  },
+  8: {
+    abbr: "ed",
+    name: "elapsed days",
+  },
+  9: {
+    abbr: "w",
+    name: "weeks",
+    formatter: function(from, to) {
+      return (to - from) / 7 / 24 / 60 / 60 / 1000;
+    }
+  },
+  10: {
+    abbr: "ew",
+    name: "elapsed weeks",
+  },
+  11: {
+    abbr: "mo",
+    name: "months",
+  },
+  12: {
+    abbr: "emo",
+    name: "elapsed months",
+  },
+  19: {
+    abbr: "%",
+    name: "percent",
+  },
+  20: {
+    abbr: "e%",
+    name: "elapsed percent",
+  },
+  21: null,
+  35: {
+    abbr: "m?",
+    name: "estimated minutes",
+  },
+  36: {
+    abbr: "em?",
+    name: "estimated elapsed minutes",
+  },
+  37: {
+    abbr: "h?",
+    name: "estimated hours",
+  },
+  38: {
+    abbr: "h?",
+    name: "estimated elapsed hours",
+  },
+  39: {
+    abbr: "d?",
+    name: "estimated days",
+  },
+  40: {
+    abbr: "ed?",
+    name: "estimated elapsed days",
+  },
+  41: {
+    abbr: "w?",
+    name: "estimated weeks",
+  },
+  42: {
+    abbr: "ew?",
+    name: "estimated elapsed weeks",
+  },
+  43: {
+    abbr: "mo?",
+    name: "estimated months",
+  },
+  44: {
+    abbr: "emo?",
+    name: "estimated elapsed months",
+  },
+  51: {
+    abbr: "%?",
+    name: "estimated percent",
+  },
+  52: {
+    abbr: "e%?",
+    name: "estimated elapsed percent",
+  },
+  53: null
+};
+
 (MspDocument = function(){
   this.data = null;
 }).prototype = {
@@ -44,6 +160,44 @@ function elementToObject(node) {
     var object = elementToObject(dom);
     this.data = object;
     this.indexData();
+  },
+  formatDuration: function(startDate, endDate, format){
+    var format = dateFormats[format];
+    var formatter = format.formatter;
+    var value;
+    if (formatter) {
+      value = formatter(startDate.getTime(), endDate.getTime());
+      value += " " + format.name;
+    }
+    else {
+      value = "duration format \"" + format.name + "\" not implemented :(";
+    }
+    return value;
+  },
+  parseISO8601Duration: function(duration){
+              //   12       34       56         78       91       12
+    var match = /^P((\d+)Y)?((\d+)M)?((\d+)D)?T?((\d+)H)?((\d+)M)?((\d+)S)?$/.exec(duration);
+    if (!match) throw "Illegal duration value.";
+    var o = {};
+    if (match[2]) {
+      o.years = parseInt(match[2], 10);
+    }
+    if (match[4]){
+      o.months = parseInt(match[4], 10);
+    }
+    if (match[6]){
+      o.days = parseInt(match[6], 10);
+    }
+    if (match[8]){
+      o.hours = parseInt(match[8], 10);
+    }
+    if (match[10]){
+      o.minutes = parseInt(match[10], 10);
+    }
+    if (match[12]){
+      o.seconds = parseInt(match[12], 10);
+    }
+    return o;
   },
   index: function(path, keys, multiple){
     var array = this.getValueAsArray.apply(this, path);
@@ -167,6 +321,23 @@ function elementToObject(node) {
       minDate: new Date(minDate),
       maxDate: new Date(maxDate)
     };
+  },
+  getDurationFormat: function(item){
+    var durationFormat;
+    if (item) {
+      durationFormat = item.DurationFormat;
+      durationFormat = parseInt(durationFormat, 10);
+      if (durationFormat < 3 || durationFormat > 51) {
+        throw "Invalid duration format " + durationFormat;
+      }
+      if (durationFormat !== 21 && durationFormat !== 51) {
+        return durationFormat;
+      }
+    }
+    if (!this.durationFormat){
+      this.durationFormat = this.getValueAsInteger("Project", "DurationFormat");
+    }
+    return this.durationFormat;
   },
   getStartDate: function(){
     return this.getValueAsDate("Project", "StartDate");

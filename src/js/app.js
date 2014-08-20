@@ -121,9 +121,16 @@ cEl("div", {
 }, null, body);
 
 var calendarResolution = mainToolbar.getDepressedButtonInToggleGroup("calendar").conf["class"];
-var dateFormatter = function(value){
+var dateFormatter = function(value, task, doc){
   var date = gantTChart.getDocument().parseDate(value);
   return (new Date(date)).toDateString();
+}
+var durationFormatter = function(value, task, doc) {
+  var duration = doc.parseISO8601Duration(value);
+  var start = new Date(doc.parseDate(task.Start));
+  var end = dateAdd(start, duration);
+  var durationFormat = doc.getDurationFormat(task);
+  return doc.formatDuration(start, end, durationFormat);
 }
 var gantTChart = new GantTChart({
   container: gEl("workarea"),
@@ -136,12 +143,24 @@ var gantTChart = new GantTChart({
       formatter: dateFormatter
     },
     Duration: {
-      //formatter: durationFormatter
+      formatter: durationFormatter
     }
   }
 });
 var gantEl = gantTChart.createDom();
 gantEl.style.display = "none";
 
+//handle window resize.
+var windowResizedTimer = new Timer({delay: 100});
+var splitterRatio;
+windowResizedTimer.listen("expired", function(){
+  gantTChart.setSplitterPosition(gantTChart.getSize() * splitterRatio);
+});
+listen(window, "resize", function(){
+  splitterRatio = gantTChart.getSplitterRatio();
+  windowResizedTimer.start();
+});
+
+//
 spinner.hide();
 })()

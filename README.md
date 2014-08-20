@@ -17,7 +17,7 @@ The sample application also shows how you can embed the open msp viewer into you
 
 Supported MS Project File formats
 ---------------------------------
-For now, any XML format supported by MS Project. There are a few sample files in the sample directory which you can use to test.
+The open-msp-viewer can handle only the XML format as exported by MS Project. There are a few sample files in the sample directory which you can use to test.
 
 If you run into trouble loading a particular XML file created by MS Project, please file an issue and please attach a minimal version of the file that reproduces the problem.
 Please clearly state with wich version of MS project you created the file.
@@ -25,7 +25,7 @@ Please clearly state with wich version of MS project you created the file.
 If you manipulate MS Project XML Files outside of MS Project, and you experience problems loading the file in the open-msp-viewer, but not in MS Project itself, then we're interested to learn about that too.
 In those cases, please clearly state the nature of the modification. Attach the file that won't load. Please also load the file in MS Project, re-export, and attach that as well so that we can discover any differences.
 
-If you have a need to load .msp files, or other file formats, please file an issue and explain your requirements.
+If you have a need to load .msp files, or other file formats, please add a comment to [issue 10](https://github.com/rpbouman/open-msp-viewer/issues/10 "Ability to open .mpp files (binary) #10") and explain your requirements.
 As this is a not-for profit open source project, we cannot make any guarantees. However, we can always negotiate some conditions that do give you guarantees.
 
 Developers

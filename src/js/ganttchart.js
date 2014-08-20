@@ -554,7 +554,7 @@ adopt(GantTChartComponent, ContentPane);
     }
     body.style.borderBottomWidth = borderBottomWidth + "px";
   },
-  addTask: function(task, index, suppressProjectSummaryTask){
+  addTask: function(task, index, suppressProjectSummaryTask, doc){
     var gantTChart = this.getGantTChart();
     var mspDocument = gantTChart.getDocument();
     if (suppressProjectSummaryTask && index === 0) return;
@@ -795,7 +795,7 @@ adopt(GantTCalendarPane, GantTChartComponent);
       columnIndex++;
     }
   },
-  addTask: function(task, index, suppressProjectSummaryTask){
+  addTask: function(task, index, suppressProjectSummaryTask, doc){
     if (suppressProjectSummaryTask && index === 0) return;
     var outlineLevel = parseInt(task.OutlineLevel, 10);
     var isNull = task.IsNull === "1";
@@ -852,7 +852,7 @@ adopt(GantTCalendarPane, GantTChartComponent);
       value = task[configuredAttribute];
       //todo: format value
       if (configuredAttributeDef.formatter) {
-        value = configuredAttributeDef.formatter(value);
+        value = configuredAttributeDef.formatter(value, task, doc);
       }
       cell.innerHTML = isNull ? "<br/>" : value;
     }
@@ -912,12 +912,14 @@ adopt(GantTTaskPane, GantTChartComponent);
   if (!conf.calendarResolution) {
     conf.calendarResolution = "project";
   }
-  if (!conf.splitterPositionChangedTimeout) {
-    conf.splitterPositionChangedTimeout = GantTChart.splitterPositionChangedDefaultTimeout;
-  }
   SplitPane.call(this, conf);
   this.setCalendarResolution(conf.calendarResolution);
-  this.listen("splitterPositionChanged", this.timeSplitterPositionChanged, this);
+
+  this.splitterPositionChangedTimer = new Timer({
+    delay: conf.splitterPositionChangedTimeout || GantTChart.splitterPositionChangedDefaultTimeout
+  });
+  this.splitterPositionChangedTimer.listen("expired", this.syncSize, this);
+  this.listen("splitterPositionChanged", this.splitterPositionChanged, this);
 }).prototype = {
   setCalendarResolution: function(resolution){
     this.getCalendarPane().setCalendarResolution(resolution);
@@ -997,17 +999,14 @@ adopt(GantTTaskPane, GantTChartComponent);
     taskPane.taskToggled();
     calendarPane.taskToggled();
   },
-  timeSplitterPositionChanged: function(){
-    if (this.timeSplitterPositionChangedTimeout) {
-      win.clearTimeout(this.timeSplitterPositionChangedTimeout);
-    }
-    var me = this;
-    this.timeSplitterPositionChangedTimeout = win.setTimeout(function(){
-      me.getTaskPane().widthChanged();
-      var calendarPane = me.getCalendarPane();
-      calendarPane.widthChanged();
-      calendarPane.updateCalendarHeight();
-    }, this.conf.splitterPositionChangedTimeout);
+  splitterPositionChanged: function(){
+    this.splitterPositionChangedTimer.start();
+  },
+  syncSize: function(){
+    this.getTaskPane().widthChanged();
+    var calendarPane = this.getCalendarPane();
+    calendarPane.widthChanged();
+    calendarPane.updateCalendarHeight();
   },
   getTaskPane: function(){
     var taskPane = this.taskPane;
@@ -1040,9 +1039,10 @@ adopt(GantTTaskPane, GantTChartComponent);
     var taskPane = this.getTaskPane();
     var calendarPane = this.getCalendarPane();
     calendarPane.renderHeader();
-    this.mspDocument.forEachTask(function(task, index) {
-      taskPane.addTask(task, index, !dontSuppressProjectSummaryTask);
-      calendarPane.addTask(task, index, !dontSuppressProjectSummaryTask);
+    var doc = this.getDocument();
+    doc.forEachTask(function(task, index) {
+      taskPane.addTask(task, index, !dontSuppressProjectSummaryTask, doc);
+      calendarPane.addTask(task, index, !dontSuppressProjectSummaryTask, doc);
     });
     taskPane.tasksAdded();
     calendarPane.tasksAdded();
