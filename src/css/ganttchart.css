@@ -56,13 +56,20 @@ table.gant-t-chart-taskpane-attributes-table  > tbody > tr.task > td {
   padding-right: .5em;
 }
 
+table.gant-t-chart-taskpane-tasks-table > tbody > tr.task-Summary1,
+table.gant-t-chart-taskpane-attributes-table > tbody > tr.task-Summary1  {
+  font-weight: bold;
+}
+
 tr.task > td.task-identity {
   text-align: right;
   border-style: none solid solid solid;
   border-width: 1px;
 }
 
-tr.task > td.task-label {
+/* suppress bold for identity cell (MSP does, we do too) */
+table.gant-t-chart-taskpane-tasks-table > tbody > tr.task-Summary1 > td.task-identity {
+  font-weight: normal;
 }
 
 tr.task > td.task-label > span.task-toggle {
@@ -88,8 +95,12 @@ tr.task-collapsed > td.task-label > span.task-toggle {
   background-image: url("../images/toggle-small-expand-icon.png");
 }
 
-tr.task-Summary1 > td.task-label > label {
-  font-weight: bold;
+tr.task > td.task-label {
+}
+
+tr.task > td.task-label > span.task-wbs {
+  padding-left: .5em;
+  padding-right: .5em;
 }
 
 div.gant-t-chart-taskpane-attributes-header {
@@ -705,8 +716,10 @@ div.task-predecessor-link-type3-below-right > div.task-predecessor-link-segment5
   bottom: 5px;
   right: -4px;
 }
-
-table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources {
+/*
+ *  Gant t resources
+**/
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources {
   display: inline;
   position: absolute;
   list-style: none;
@@ -714,16 +727,30 @@ table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resourc
   padding-left: 13px;
 }
 
-table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource {
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource {
   display: inline;
 }
 
-/* would have been great but for IE8.
-table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource:after {
-  content: ", ";
+/*
+ * Separate resources by semi-colon.
+ * MSP uses a comma as separator, but since IE8 will show a trailing separator, we use a semi-colon.
+*/
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource:after {
+  content: "; ";
 }
 
-table.gant-t-chart-calendarpane-body-table > tbody > tr > td > .task-bar-resources > .task-bar-resource:last-child::after {
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource:last-child::after {
   content: "";
 }
-*/
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource-fulltime > span.task-bar-resource-units-pct {
+  display: none;
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource > span.task-bar-resource-units-pct:before {
+  content: " ";
+}
+
+table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource > span.task-bar-resource-units-pct:after {
+  content: "%";
+}

@@ -27,7 +27,9 @@ mainToolbar.addButton([
   {"class": "year", tooltip: "Year", toggleGroup: "calendar"},
   {"class": "month", tooltip: "Month", toggleGroup: "calendar"},
   {"class": "week", tooltip: "Week", toggleGroup: "calendar"},
-  {"class": "day", tooltip: "Day", toggleGroup: "calendar"}
+  {"class": "day", tooltip: "Day", toggleGroup: "calendar"},
+  {"class": "separator"},
+  {"class": "show-wbs", tooltip: "Show WBS", toggleGroup: "show-wbs", depressed: false}
 ]);
 
 mainToolbar.listen({
@@ -47,6 +49,9 @@ mainToolbar.listen({
         break;
       case "calendar":
         gantTChart.setCalendarResolution(newButtonClass);
+        break;
+      case "show-wbs":
+        gantTChart.displayWBS(newButton.isDepressed());
         break;
     }
   }

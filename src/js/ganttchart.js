@@ -310,7 +310,9 @@ adopt(GantTChartComponent, ContentPane);
   getProjectDatesAndDimensions: function(){
     var gantTChart = this.getGantTChart();
     var mspDocument = gantTChart.getDocument();
-    if (!mspDocument) return null;
+    if (!mspDocument) {
+      return null;
+    }
     var boundaryDates = mspDocument.getBoundaryDates();
     var startDate = truncateDate(boundaryDates.minDate, "day");
     var finishDate = truncateDate(dateAdd(boundaryDates.maxDate, {days: 1}), "day");
@@ -554,9 +556,98 @@ adopt(GantTChartComponent, ContentPane);
     }
     body.style.borderBottomWidth = borderBottomWidth + "px";
   },
+  createTaskBarHandles: function(task, children){
+    if (task.Summary !== "1" && task.Milestone !== "1") {
+      return;
+    }
+    children.push(
+      cEl("div", {
+        "class": "task-bar-left"
+      })
+    );
+    children.push(
+      cEl("div", {
+        "class": "task-bar-right"
+      })
+    );
+  },
+  createTaskBarProgressIndicators: function(task, children){
+    if (task.Summary === "1" || task.Milestone === "1") {
+      return;
+    }
+    children.push(
+      cEl("div", {
+        "class": "task-bar-pct-complete",
+        title: "Complete: " + task.PercentComplete + "%",
+        style: {
+          width: task.PercentComplete + "%"
+        }
+      })
+    );
+    children.push(
+      cEl("div", {
+        "class": "task-bar-pct-work-complete",
+        title: "Work complete: " + task.PercentWorkComplete + "%",
+        style: {
+          width: task.PercentWorkComplete + "%"
+        }
+      })
+    );
+    children.push(
+      cEl("div", {
+        "class": "task-bar-physical-pct-complete",
+        title: "Physical complete: " + task.PhysicalPercentComplete + "%",
+        style: {
+          width: task.PhysicalPercentComplete + "%"
+        }
+      })
+    );
+  },
+  createTaskBarResources: function(cell, document, task){
+    var assignments = document.getAssignmentsByTaskUID(task.UID);
+    if (assignments) {
+      var resources = cEl("ul", {
+        "class": "task-bar-resources"
+      }, null, cell);
+      var i, n, assignment, resource, label;
+      for (i = 0, n = assignments.length; i < n; i++){
+        assignment = assignments[i];
+        resource = document.getResourceByUID(assignment.ResourceUID);
+        if (resource) {
+          var units = assignment.Units || "1";
+          units = parseFloat(units);
+          var partTimeFullTime;
+          if (units < 1) {
+            partTimeFullTime = "parttime";
+          }
+          else
+          if (units > 1) {
+            partTimeFullTime = "overtime";
+          }
+          else {
+            partTimeFullTime = "fulltime";
+          }
+          var resourceChildElements = [
+            cEl("span", {
+              "class": "task-bar-resource-name"
+            }, resource.Name),
+            cEl("span", {
+              "class": "task-bar-resource-units-pct"
+            }, String(Math.round(units * 100)))
+          ];
+          cEl("li", {
+            "data-resource-uid": resource.UID,
+            "data-units": assignment.Units,
+            "class": "task-bar-resource " +
+                     "task-bar-resource-" + partTimeFullTime
+          }, resourceChildElements, resources);
+        }
+      }
+    }
+  },
   addTask: function(task, index, suppressProjectSummaryTask, doc){
     var gantTChart = this.getGantTChart();
-    var mspDocument = gantTChart.getDocument();
+    var document = gantTChart.getDocument();
     if (suppressProjectSummaryTask && index === 0) return;
     var taskUID = task.UID;
     var bodyTable = this.getBodyTable();
@@ -565,70 +656,23 @@ adopt(GantTChartComponent, ContentPane);
     sAtts(row, {
       id: "calendarpane-taskUID-" + taskUID,
       "data-WBS": task.WBS,
-      "data-start": mspDocument.parseDate(task.Start),
-      "data-finish": mspDocument.parseDate(task.Finish),
+      "data-start": document.parseDate(task.Start),
+      "data-finish": document.parseDate(task.Finish),
       "class": this.getTaskClassName(task)
     });
 
     var cell = row.insertCell(0);
-    var children;
-    if (task.Summary === "1" || task.Milestone === "1") {
-      children = [
-        cEl("div", {
-          "class": "task-bar-left"
-        }),
-        cEl("div", {
-          "class": "task-bar-right"
-        })
-      ]
-    }
-    else {
-      children = [
-        cEl("div", {
-          "class": "task-bar-pct-complete",
-          title: "Complete: " + task.PercentComplete + "%",
-          style: {
-            width: task.PercentComplete + "%"
-          }
-        }),
-        cEl("div", {
-          "class": "task-bar-pct-work-complete",
-          title: "Work complete: " + task.PercentWorkComplete + "%",
-          style: {
-            width: task.PercentWorkComplete + "%"
-          }
-        }),
-        cEl("div", {
-          "class": "task-bar-physical-pct-complete",
-          title: "Physical complete: " + task.PhysicalPercentComplete + "%",
-          style: {
-            width: task.PhysicalPercentComplete + "%"
-          }
-        })
-      ];
-    }
+    var children = [];
+    this.createTaskBarHandles(task,children);
+    this.createTaskBarProgressIndicators(task,children);
+
     cEl("div", {
       id: "task-bar-" + task.UID,
       "class": "task-bar",
       title: task.Name,
     }, children, cell);
-    var assignments = mspDocument.getAssignmentsByTaskUID(taskUID);
-    if (assignments) {
-      var resources = cEl("ul", {
-        "class": "task-bar-resources"
-      }, null, cell);
-      var i, n, assignment, resource, label;
-      for (i = 0, n = assignments.length; i < n; i++){
-        assignment = assignments[i];
-        resource = mspDocument.getResourceByUID(assignment.ResourceUID);
-        if (resource) {
-          label = (i ? ", " : "") + resource.Name;
-          cEl("li", {
-            "class": "task-bar-resource"
-          }, label, resources);
-        }
-      }
-    }
+
+    this.createTaskBarResources(cell, document, task);
     cEl("br", {}, null, cell);
   },
   tasksAdded: function(){
@@ -808,11 +852,12 @@ adopt(GantTCalendarPane, GantTChartComponent);
     if (task.Summary === "1") {
       toggleState = " task-expanded";
     }
+    var className = this.getTaskClassName(task) + toggleState;
     sAtts(row, {
       id: "taskpane-taskUID-" + task.UID,
       "data-WBS": task.WBS,
       "data-OutlineLevel": outlineLevel,
-      "class": this.getTaskClassName(task) + toggleState
+      "class": className
     });
 
     var cell;
@@ -825,6 +870,9 @@ adopt(GantTCalendarPane, GantTChartComponent);
     cEl("span", {
       "class": "task-toggle"
     }, String.fromCharCode(160), cell);
+    cEl("span", {
+      "class": "task-wbs"
+    }, task.WBS, cell);
     cEl("label", {
       "class": "task-name"
     }, isNull ? String.fromCharCode(160) : task.Name, cell);
@@ -841,7 +889,7 @@ adopt(GantTCalendarPane, GantTChartComponent);
     row = attributesTable.insertRow(rows.length);
     sAtts(row, {
       id: "taskpane-taskUID-" + task.UID,
-      "class": "task"
+      "class": className
     });
     var configuredAttributes = this.getConfiguredAttributes();
     var configuredAttribute, configuredAttributeDef, value;
@@ -890,6 +938,10 @@ adopt(GantTCalendarPane, GantTChartComponent);
     var taskTableHeader = this.getTaskTableHeader();
     taskTableHeader.style.width = (taskTable.offsetWidth - 5) + "px";
   },
+  taskTableWidthChanged: function(){
+    this.updateTaskTableHeaderWidth();
+    this.updateAttributesWidth();
+  },
   tasksAdded: function(){
     this.updateTaskTableHeaderWidth();
     this.updateAttributesWidth();
@@ -920,7 +972,27 @@ adopt(GantTTaskPane, GantTChartComponent);
   });
   this.splitterPositionChangedTimer.listen("expired", this.syncSize, this);
   this.listen("splitterPositionChanged", this.splitterPositionChanged, this);
+  var rules = {};
+  rules["#" + this.getId() + " span.task-wbs"] = {
+    display: (conf.displayWBS ? conf.displayWBS : false) ? "inline" : "none"
+  };
+  this.stylesheet = new CascadingStyleSheet({
+    id: this.getId() + "-styles",
+    rules: rules
+  });
 }).prototype = {
+  createDom: function(){
+    var el = SplitPane.prototype.createDom.call(this);
+    this.stylesheet.createDom();
+    return el;
+  },
+  displayWBS: function(displayWBS){
+    this.conf.displayWBS = Boolean(displayWBS);
+    this.stylesheet.applyStyle("#" + this.getId() + " span.task-wbs", {
+      display: this.conf.displayWBS ? "inline" : "none"
+    });
+    this.getTaskPane().taskTableWidthChanged();
+  },
   setCalendarResolution: function(resolution){
     this.getCalendarPane().setCalendarResolution(resolution);
   },

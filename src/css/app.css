@@ -37,3 +37,7 @@ div.toolbar > div.week {
 div.toolbar > div.day {
   background-image: url("../images/Actions-view-calendar-day-icon.png");
 }
+
+div.toolbar > div.show-wbs {
+  background-image: url("../images/text-list-numbers-icon.png");
+}
