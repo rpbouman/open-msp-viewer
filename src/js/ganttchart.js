@@ -134,6 +134,143 @@ adopt(GantTChartComponent, ContentPane);
     var header = this.getHeader();
     header.style.left = (-scrollLeft) + "px";
   },
+  createTaskLink: function(body, linkId){
+    return cEl("div", {
+      id: linkId
+    }, [
+      cEl("div", {
+        id: linkId + "-segment1",
+        "class": "task-predecessor-link-segment" +
+                  " task-predecessor-link-segment1"
+      }),
+      cEl("div", {
+        id: linkId + "-segment2",
+        "class": "task-predecessor-link-segment" +
+                  " task-predecessor-link-segment2"
+      }),
+      cEl("div", {
+        id: linkId + "-segment3",
+        "class": "task-predecessor-link-segment" +
+                  " task-predecessor-link-segment3"
+      }),
+      cEl("div", {
+        id: linkId + "-segment4",
+        "class": "task-predecessor-link-segment" +
+                  " task-predecessor-link-segment4"
+      }),
+      cEl("div", {
+        id: linkId + "-segment5",
+        "class": "task-predecessor-link-segment" +
+                  " task-predecessor-link-segment5"
+      })
+    ], body);
+  },
+  renderTaskLinks: function(mspDocument, projectDatesAndDimensions, task, taskStart, taskFinish, container, row, rowDisplayed, rowTop){
+    mspDocument.forEachTaskLink(task, function(link, index){
+      var isNew;
+      var linkId = "link-task-" + task.UID + "-predecessor-task-" + link.PredecessorUID;
+      var linkEl = gEl(linkId);
+      if (linkEl) {
+        isNew = false;
+      }
+      else {
+        isNew = true;
+        linkEl = this.createTaskLink(container, linkId);
+      }
+      if (!rowDisplayed) {
+        linkEl.style.display = "none";
+        return;
+      }
+      var predecessorRow = gEl("calendarpane-taskUID-" + link.PredecessorUID);
+      if (!predecessorRow) {
+        console.log("Whoops, predecessor not found.");
+        return;
+      }
+      if (predecessorRow.style.display === "none") {
+        linkEl.style.display = "none";
+        return;
+      }
+      else {
+        linkEl.style.display = "";
+      }
+
+      var linkType = parseInt(link.Type, 10);
+
+      //is task below or above its predecessor?
+      var aboveBelow = row.rowIndex > predecessorRow.rowIndex ? "below" : "above";
+
+      var from;
+      switch (linkType) {
+        case 0: //FF (finish-to-finish)
+        case 1: //FS (finish-to-start)
+          from = parseInt(gAtt(predecessorRow, "data-finish"), 10);
+          break;
+        case 2: //SF (start-to-finish)
+        case 3: //SS (start-to-start)
+          from = parseInt(gAtt(predecessorRow, "data-start"), 10);
+          break;
+        default:
+      }
+
+      var to;
+      switch (linkType) {
+        case 0: //FF (finish-to-finish)
+        case 2: //SF (start-to-finish)
+          to = taskFinish;
+          break;
+        case 1: //FS (finish-to-start)
+        case 3: //SS (start-to-start)
+          to = taskStart;
+          break;
+        default:
+      }
+
+      var predecessorRowTop = predecessorRow.offsetTop;
+      var height = Math.abs(rowTop - predecessorRowTop);
+      linkEl.style.height = height + "px";
+      var top = Math.min(rowTop, predecessorRowTop);
+      linkEl.style.top = parseInt(row.offsetHeight/2 + top, 10) + "px";
+      var left, width;
+
+      var xFrom, xTo, diff;
+      diff = from - projectDatesAndDimensions.startTime;
+      xFrom = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
+
+      diff = to - projectDatesAndDimensions.startTime;
+      xTo = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
+
+      var width = Math.abs(xTo - xFrom);
+      if (from < to) {
+        //task is right from its predecessor
+        leftRight = "right";
+        linkEl.style.left = (xFrom + 2) + "px";
+        linkEl.style.width = width + "px";
+        if (width < 9) {
+//            linkEl.childNodes[2].style.left = width + "px";
+//            linkEl.childNodes[2].style.right = (width - 9) + "px";
+        }
+      }
+      else {
+        //task is left from its predecessor
+        leftRight = "left";
+        linkEl.style.left = xTo + "px";
+        linkEl.style.width = width + "px";
+        if (width < 9) {
+//            linkEl.childNodes[2].style.left = (width - 9) + "px";
+//            linkEl.childNodes[2].style.left = width + "px";
+        }
+      }
+      if (isNew) {
+        linkEl.className =  "task-predecessor-link" +
+                          " task-predecessor-link-type" + linkType +
+                          " task-predecessor-link-" + aboveBelow +
+                          " task-predecessor-link-" + leftRight +
+                          " task-predecessor-link-type" +
+                          linkType + "-" + aboveBelow + "-" + leftRight
+        ;
+      }
+    }, this);
+  },
   renderTasks: function(){
     var gantTChart = this.getGantTChart();
     var mspDocument = gantTChart.getDocument();
@@ -188,143 +325,15 @@ adopt(GantTChartComponent, ContentPane);
         resourcesDiv.style.left = (l + (w - l)) + "px";
 
         //var posRow = pos(row, body);
-        var rowTop = getRowTop(row);
+        var rowTop = row.offsetTop;
       }
-      mspDocument.forEachTaskLink(task, function(link, index){
-        var isNew;
-        var linkId = "link-task-" + task.UID + "-predecessor-task-" + link.PredecessorUID;
-        var linkEl = gEl(linkId);
-        if (linkEl) {
-          isNew = false;
-        }
-        else {
-          isNew = true;
-          linkEl = cEl("div", {
-            id: linkId
-          }, [
-            cEl("div", {
-              id: linkId + "-segment1",
-              "class": "task-predecessor-link-segment" +
-                        " task-predecessor-link-segment1"
-            }),
-            cEl("div", {
-              id: linkId + "-segment2",
-              "class": "task-predecessor-link-segment" +
-                        " task-predecessor-link-segment2"
-            }),
-            cEl("div", {
-              id: linkId + "-segment3",
-              "class": "task-predecessor-link-segment" +
-                        " task-predecessor-link-segment3"
-            }),
-            cEl("div", {
-              id: linkId + "-segment4",
-              "class": "task-predecessor-link-segment" +
-                        " task-predecessor-link-segment4"
-            }),
-            cEl("div", {
-              id: linkId + "-segment5",
-              "class": "task-predecessor-link-segment" +
-                        " task-predecessor-link-segment5"
-            })
-          ], body);
-        }
-        if (!rowDisplayed) {
-          linkEl.style.display = "none";
-          return;
-        }
-        var predecessorRow = gEl("calendarpane-taskUID-" + link.PredecessorUID);
-        if (!predecessorRow) {
-          console.log("Whoops, predecessor not found.");
-          return;
-        }
-        if (predecessorRow.style.display === "none") {
-          linkEl.style.display = "none";
-          return;
-        }
-        else {
-          linkEl.style.display = "";
-        }
-
-        var linkType = parseInt(link.Type, 10);
-
-        //is task below or above its predecessor?
-        var aboveBelow = row.rowIndex > predecessorRow.rowIndex ? "below" : "above";
-        //var posPredecessorRow = pos(predecessorRow, body);
-        var predecessorRowTop = getRowTop(predecessorRow);
-
-        var from;
-        switch (linkType) {
-          case 0: //FF (finish-to-finish)
-          case 1: //FS (finish-to-start)
-            from = parseInt(gAtt(predecessorRow, "data-finish"), 10);
-            break;
-          case 2: //SF (start-to-finish)
-          case 3: //SS (start-to-start)
-            from = parseInt(gAtt(predecessorRow, "data-start"), 10);
-            break;
-          default:
-        }
-
-        var to;
-        switch (linkType) {
-          case 0: //FF (finish-to-finish)
-          case 2: //SF (start-to-finish)
-            to = taskFinish;
-            break;
-          case 1: //FS (finish-to-start)
-          case 3: //SS (start-to-start)
-            to = taskStart;
-            break;
-          default:
-        }
-        //var height = Math.abs(posRow.top - posPredecessorRow.top);
-        var height = Math.abs(rowTop - predecessorRowTop);
-        linkEl.style.height = height + "px";
-        //var top = Math.min(posRow.top, posPredecessorRow.top);
-        var top = Math.min(rowTop, predecessorRowTop);
-        linkEl.style.top = parseInt(row.offsetHeight/2 + top, 10) + "px";
-        var left, width;
-
-        var xFrom, xTo;
-        diff = from - projectDatesAndDimensions.startTime;
-        xFrom = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
-
-        diff = to - projectDatesAndDimensions.startTime;
-        xTo = parseInt(projectDatesAndDimensions.width / projectDatesAndDimensions.screenMillis * diff, 10);
-
-        var width = Math.abs(xTo - xFrom);
-        if (from < to) {
-          //task is right from its predecessor
-          leftRight = "right";
-          linkEl.style.left = (xFrom + 2) + "px";
-          linkEl.style.width = width + "px";
-          if (width < 9) {
-//            linkEl.childNodes[2].style.left = width + "px";
-//            linkEl.childNodes[2].style.right = (width - 9) + "px";
-          }
-        }
-        else {
-          //task is left from its predecessor
-          leftRight = "left";
-          linkEl.style.left = xTo + "px";
-          linkEl.style.width = width + "px";
-          if (width < 9) {
-//            linkEl.childNodes[2].style.left = (width - 9) + "px";
-//            linkEl.childNodes[2].style.left = width + "px";
-          }
-        }
-        if (isNew) {
-          linkEl.className =  "task-predecessor-link" +
-                            " task-predecessor-link-type" + linkType +
-                            " task-predecessor-link-" + aboveBelow +
-                            " task-predecessor-link-" + leftRight +
-                            " task-predecessor-link-type" +
-                            linkType + "-" + aboveBelow + "-" + leftRight
-          ;
-        }
-      });
-    });
+      this.renderTaskLinks(
+        mspDocument, projectDatesAndDimensions,
+        task, taskStart, taskFinish,
+        body,
+        row, rowDisplayed, rowTop
+      );
+    }, this);
   },
   getProjectDatesAndDimensions: function(){
     var gantTChart = this.getGantTChart();
