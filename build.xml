@@ -26,8 +26,52 @@
   <target name="mui">
     <delete dir="${mui.dst.dir}"/>
     <mkdir dir="${mui.dst.dir}"/>
-    <copy todir="${mui.dst.dir}" >
-      <fileset dir="${mui.src.dir}" includes="**"/>
+
+    <mkdir dir="${mui.dst.dir}/js"/>
+    <copy todir="${mui.dst.dir}/js" >
+      <fileset dir="${mui.src.dir}/js">
+        <include name="utilities.js"/>
+        <include name="dateutils.js"/>
+        <include name="dom.js"/>
+        <include name="event.js"/>
+        <include name="observable.js"/>
+        <include name="dnd.js"/>
+        <include name="displayed.js"/>
+        <include name="disabled.js"/>
+        <include name="spinner.js"/>
+        <include name="toolbar.js"/>
+        <include name="contentarea.js"/>
+        <include name="contentpane.js"/>
+        <include name="splitpane.js"/>
+        <include name="parseXml.js"/>
+        <include name="timer.js"/>
+        <include name="cascadingstylesheet.js"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${mui.dst.dir}/css"/>
+    <copy todir="${mui.dst.dir}/css" >
+      <fileset dir="${mui.src.dir}/css">
+        <include name="contentarea.css"/>
+        <include name="contentpane.css"/>
+        <include name="dnd.css"/>
+        <include name="spinner.css"/>
+        <include name="splitpane.css"/>
+        <include name="toolbar.css"/>
+        <include name="tooltip.css"/>
+      </fileset>
+    </copy>
+
+    <mkdir dir="${mui.dst.dir}/images"/>
+    <copy todir="${mui.dst.dir}/images" >
+      <fileset dir="${mui.src.dir}/images">
+        <include name="arrow-down-16x16.png"/>
+        <include name="arrow-left-16x16.png"/>
+        <include name="arrow-right-16x16.png"/>
+        <include name="arrow-up-16x16.png"/>
+        <include name="folder-16x16.png"/>
+        <include name="spinner.gif"/>
+      </fileset>
     </copy>
   </target>
 
