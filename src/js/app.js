@@ -37,9 +37,11 @@ mainToolbar.addButton([
     id: "file",
     type: "file"
   }),
+/*
   {"class": "separator"},
   {"class": "ganttchart", tooltip: "Gant T Chart", toggleGroup: "view", depressed: true},
   {"class": "resources", tooltip: "Resources", toggleGroup: "view"},
+*/
   {"class": "separator"},
   {"class": "project", tooltip: "Project", toggleGroup: "calendar", depressed: true},
   {"class": "year", tooltip: "Year", toggleGroup: "calendar"},
@@ -64,9 +66,11 @@ mainToolbar.listen({
     var newButton = data.newButton;
     var newButtonClass = newButton.conf["class"];
     switch (data.group) {
+/*
       case "view":
         //todo: show the current view, hide the others.
         break;
+*/
       case "calendar":
         gantTChart.setCalendarResolution(newButtonClass);
         break;
