@@ -633,45 +633,68 @@ adopt(GantTChartComponent, ContentPane);
   },
   createTaskBarResources: function(cell, document, task){
     var assignments = document.getAssignmentsByTaskUID(task.UID);
-    if (assignments) {
-      var resources = cEl("ul", {
-        "class": "task-bar-resources"
-      }, null, cell);
-      var i, n, assignment, resource, label;
-      for (i = 0, n = assignments.length; i < n; i++){
-        assignment = assignments[i];
-        resource = document.getResourceByUID(assignment.ResourceUID);
-        if (resource) {
-          var units = assignment.Units || "1";
-          units = parseFloat(units);
-          var partTimeFullTime;
-          if (units < 1) {
-            partTimeFullTime = "parttime";
-          }
-          else
-          if (units > 1) {
-            partTimeFullTime = "overtime";
-          }
-          else {
-            partTimeFullTime = "fulltime";
-          }
-          var resourceChildElements = [
-            cEl("span", {
-              "class": "task-bar-resource-name"
-            }, resource.Name),
-            cEl("span", {
-              "class": "task-bar-resource-units-pct"
-            }, String(Math.round(units * 100)))
-          ];
-          cEl("li", {
-            "data-resource-uid": resource.UID,
-            "data-units": assignment.Units,
-            "class": "task-bar-resource " +
-                     "task-bar-resource-" + partTimeFullTime
-          }, resourceChildElements, resources);
-        }
-      }
+    if (!assignments || !assignments.length) {
+      return;
     }
+    var i, n, assignment, resource, label, resourceElements = [];
+    for (i = 0, n = assignments.length; i < n; i++){
+      assignment = assignments[i];
+      resource = document.getResourceByUID(assignment.ResourceUID);
+      if (!resource) {
+        continue;
+      }
+      var units = assignment.Units || "1";
+      units = parseFloat(units);
+      var partTimeFullTime;
+      if (units < 1) {
+        partTimeFullTime = "parttime";
+      }
+      else
+      if (units > 1) {
+        partTimeFullTime = "overtime";
+      }
+      else {
+        partTimeFullTime = "fulltime";
+      }
+      var resourceChildElements = [
+        cEl("span", {
+          "class": "task-bar-resource-name"
+        }, resource.Name),
+        cEl("span", {
+          "class": "task-bar-resource-units-pct"
+        }, String(Math.round(units * 100)))
+      ];
+      resourceElements.push(
+        cEl("li", {
+          "data-resource-uid": resource.UID,
+          "data-units": assignment.Units,
+          "class": "task-bar-resource " +
+                   "task-bar-resource-" + partTimeFullTime
+        }, resourceChildElements, resources)
+      );
+    }
+    if (!resourceElements.length) {
+      return;
+    }
+    var resources = cEl("ul", {
+      "class": "task-bar-resources"
+    }, resourceElements, cell);
+  },
+  createTaskBarFinishDateLabel: function(cell, document, task) {
+    var finishDate = new Date(document.parseDate(task.Finish));
+    var taskBarFinishDateLabel = cEl("div", {
+        "class": "task-bar-finish localized-date"
+    }, [
+      cEl("span", {
+        "class": "localized-date-year"
+      }, finishDate.getUTCFullYear()),
+      cEl("span", {
+        "class": "localized-date-month"
+      }, 1+finishDate.getUTCMonth()),
+      cEl("span", {
+        "class": "localized-date-day"
+      }, finishDate.getUTCDate())
+    ], cell);
   },
   addTask: function(task, index, suppressProjectSummaryTask, doc){
     var gantTChart = this.getGantTChart();
@@ -701,6 +724,7 @@ adopt(GantTChartComponent, ContentPane);
     }, children, cell);
 
     this.createTaskBarResources(cell, document, task);
+    this.createTaskBarFinishDateLabel(cell, document, task);
     cEl("br", {}, null, cell);
   },
   tasksAdded: function(){

@@ -23,6 +23,8 @@ linkCss(cssDir + "app.css");
 var spinner = new Spinner();
 spinner.show();
 
+body.className += ("language-" + (navigator.userLanguage || navigator.language)).toLowerCase();
+
 var dnd = new DDHandler({
   node: body
 });
@@ -168,7 +170,7 @@ cEl("div", {
 var calendarResolution = mainToolbar.getDepressedButtonInToggleGroup("calendar").conf["class"];
 var dateFormatter = function(value, task, doc){
   var date = gantTChart.getDocument().parseDate(value);
-  return (new Date(date)).toDateString();
+  return (new Date(date)).toUTCString();
 }
 var durationFormatter = function(value, task, doc) {
   var duration = doc.parseISO8601Duration(value);

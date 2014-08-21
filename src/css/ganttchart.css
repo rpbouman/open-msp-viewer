@@ -773,3 +773,14 @@ table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resou
 table.gant-t-chart-calendarpane-body-table > tbody > tr > td > ul.task-bar-resources > li.task-bar-resource > span.task-bar-resource-units-pct:after {
   content: "%";
 }
+
+/*
+ * task bar finish
+*/
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Milestone0 > td > div.task-bar-finish {
+  display: none;
+}
+table.gant-t-chart-calendarpane-body-table > tbody > tr.task-Milestone1 > td > div.task-bar-finish {
+  position: absolute;
+  padding-left: 13px;
+}

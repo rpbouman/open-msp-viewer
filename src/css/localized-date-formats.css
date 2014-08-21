@@ -1,0 +1,39 @@
+div.localized-date {
+  width: 5em;
+}
+
+/*
+*     en: dd/mm/yyyy
+*/
+html > body.language-en div.localized-date > span.localized-date-year {
+  float: right;
+}
+html > body.language-en div.localized-date > span.localized-date-month {
+}
+html > body.language-en div.localized-date > span.localized-date-month:after {
+  content: "/";
+}
+html > body.language-en div.localized-date > span.localized-date-day {
+  float: left;
+}
+html > body.language-en div.localized-date > span.localized-date-day:after {
+  content: "/";
+}
+
+/*
+*     en-US: mm/dd/yyyy
+*/
+html > body.language-en-us div.localized-date > span.localized-date-year {
+  float: right;
+}
+html > body.language-en-us div.localized-date > span.localized-date-month {
+  float: left;
+}
+html > body.language-en-us div.localized-date > span.localized-date-month:after {
+  content: "/";
+}
+html > body.language-en-us div.localized-date > span.localized-date-day {
+}
+html > body.language-en-us div.localized-date > span.localized-date-day:after {
+  content: "/";
+}
