@@ -38,6 +38,14 @@ div.toolbar > div.day {
   background-image: url("../images/Actions-view-calendar-day-icon.png");
 }
 
+div.toolbar > div.show-none {
+  background-image: url("../images/1408645937_519617-116_List2.png");
+}
+
 div.toolbar > div.show-wbs {
-  background-image: url("../images/text-list-numbers-icon.png");
+  background-image: url("../images/1408645695_text_list_bullets.png");
+}
+
+div.toolbar > div.show-outlinenumber {
+  background-image: url("../images/1408645657_text_list_numbers.png");
 }

@@ -36,7 +36,7 @@ function elementToObject(node) {
 /*
 http://msdn.microsoft.com/en-us/library/bb968637(v=office.12).aspx
 */
-var dateFormats = {
+var durationFormats = {
   3: {
     abbr: "m",
     name: "minutes",
@@ -162,7 +162,7 @@ var dateFormats = {
     this.indexData();
   },
   formatDuration: function(startDate, endDate, format){
-    var format = dateFormats[format];
+    var format = durationFormats[format];
     var formatter = format.formatter;
     var value;
     if (formatter) {

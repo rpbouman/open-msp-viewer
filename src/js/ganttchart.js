@@ -841,8 +841,8 @@ adopt(GantTCalendarPane, GantTChartComponent);
   },
   addTask: function(task, index, suppressProjectSummaryTask, doc){
     if (suppressProjectSummaryTask && index === 0) return;
-    var outlineLevel = parseInt(task.OutlineLevel, 10);
     var isNull = task.IsNull === "1";
+    var outlineLevel = isNull ? NaN : parseInt(task.OutlineLevel, 10);
 
     var taskTable = this.getTaskTable();
     var rows = taskTable.rows;
@@ -873,6 +873,9 @@ adopt(GantTCalendarPane, GantTChartComponent);
     cEl("span", {
       "class": "task-wbs"
     }, task.WBS, cell);
+    cEl("span", {
+      "class": "task-outlinenumber"
+    }, task.OutlineNumber, cell);
     cEl("label", {
       "class": "task-name"
     }, isNull ? String.fromCharCode(160) : task.Name, cell);
@@ -894,15 +897,20 @@ adopt(GantTCalendarPane, GantTChartComponent);
     var configuredAttributes = this.getConfiguredAttributes();
     var configuredAttribute, configuredAttributeDef, value;
     for (configuredAttribute in configuredAttributes) {
-      configuredAttributeDef = configuredAttributes[configuredAttribute];
-      if (configuredAttributeDef.displayed === false) continue;
-      cell = row.insertCell(row.cells.length);
-      value = task[configuredAttribute];
-      //todo: format value
-      if (configuredAttributeDef.formatter) {
-        value = configuredAttributeDef.formatter(value, task, doc);
+      if (isNull) {
+        value = "<br/>";
       }
-      cell.innerHTML = isNull ? "<br/>" : value;
+      else {
+        configuredAttributeDef = configuredAttributes[configuredAttribute];
+        if (configuredAttributeDef.displayed === false) continue;
+        cell = row.insertCell(row.cells.length);
+        value = task[configuredAttribute];
+        //todo: format value
+        if (configuredAttributeDef.formatter) {
+          value = configuredAttributeDef.formatter(value, task, doc);
+        }
+      }
+      cell.innerHTML = value;
     }
   },
   updateAttributesWidth: function(){
@@ -972,15 +980,24 @@ adopt(GantTTaskPane, GantTChartComponent);
   });
   this.splitterPositionChangedTimer.listen("expired", this.syncSize, this);
   this.listen("splitterPositionChanged", this.splitterPositionChanged, this);
-  var rules = {};
-  rules["#" + this.getId() + " span.task-wbs"] = {
-    display: (conf.displayWBS ? conf.displayWBS : false) ? "inline" : "none"
-  };
-  this.stylesheet = new CascadingStyleSheet({
-    id: this.getId() + "-styles",
-    rules: rules
-  });
+  this.initStylesheet();
 }).prototype = {
+  initStylesheet: function(){
+    var conf = this.conf, rules = {};
+    var idPrefix = "#" + this.getId();
+
+    rules[idPrefix + " span.task-wbs"] = {
+      display: Boolean(conf.displayWBS) ? "inline" : "none"
+    };
+    rules[idPrefix + " span.task-outlinenumber"] = {
+      display: Boolean(conf.displayOutlineNumber) ? "inline" : "none"
+    };
+
+    this.stylesheet = new CascadingStyleSheet({
+      id: this.getId() + "-styles",
+      rules: rules
+    });
+  },
   createDom: function(){
     var el = SplitPane.prototype.createDom.call(this);
     this.stylesheet.createDom();
@@ -990,6 +1007,13 @@ adopt(GantTTaskPane, GantTChartComponent);
     this.conf.displayWBS = Boolean(displayWBS);
     this.stylesheet.applyStyle("#" + this.getId() + " span.task-wbs", {
       display: this.conf.displayWBS ? "inline" : "none"
+    });
+    this.getTaskPane().taskTableWidthChanged();
+  },
+  displayOutlineNumber: function(displayOutlineNumber){
+    this.conf.displayOutlineNumber = Boolean(displayOutlineNumber);
+    this.stylesheet.applyStyle("#" + this.getId() + " span.task-outlinenumber", {
+      display: this.conf.displayOutlineNumber ? "inline" : "none"
     });
     this.getTaskPane().taskTableWidthChanged();
   },

@@ -98,7 +98,8 @@ tr.task-collapsed > td.task-label > span.task-toggle {
 tr.task > td.task-label {
 }
 
-tr.task > td.task-label > span.task-wbs {
+tr.task > td.task-label > span.task-wbs,
+tr.task > td.task-label > span.task-outlinenumber {
   padding-left: .5em;
   padding-right: .5em;
 }

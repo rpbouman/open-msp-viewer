@@ -29,7 +29,9 @@ mainToolbar.addButton([
   {"class": "week", tooltip: "Week", toggleGroup: "calendar"},
   {"class": "day", tooltip: "Day", toggleGroup: "calendar"},
   {"class": "separator"},
-  {"class": "show-wbs", tooltip: "Show WBS", toggleGroup: "show-wbs", depressed: false}
+  {"class": "show-none", tooltip: "Only Task name", toggleGroup: "show-task-id", depressed: true},
+  {"class": "show-wbs", tooltip: "Task name + WBS", toggleGroup: "show-task-id", depressed: false},
+  {"class": "show-outlinenumber", tooltip: "Task name + Outline Number", toggleGroup: "show-task-id", depressed: false}
 ]);
 
 mainToolbar.listen({
@@ -50,8 +52,24 @@ mainToolbar.listen({
       case "calendar":
         gantTChart.setCalendarResolution(newButtonClass);
         break;
-      case "show-wbs":
-        gantTChart.displayWBS(newButton.isDepressed());
+      case "show-task-id":
+        var displayOutlineNumber, displayWBS;
+        switch (newButton.conf["class"]) {
+          case "show-none":
+            displayOutlineNumber = false;
+            displayWBS = false;
+            break;
+          case "show-wbs":
+            displayOutlineNumber = false;
+            displayWBS = true;
+            break;
+          case "show-outlinenumber":
+            displayOutlineNumber = true;
+            displayWBS = false;
+            break;
+        }
+        gantTChart.displayOutlineNumber(displayOutlineNumber);
+        gantTChart.displayWBS(displayWBS);
         break;
     }
   }
@@ -133,9 +151,10 @@ var dateFormatter = function(value, task, doc){
 var durationFormatter = function(value, task, doc) {
   var duration = doc.parseISO8601Duration(value);
   var start = new Date(doc.parseDate(task.Start));
-  var end = dateAdd(start, duration);
+  //var end = dateAdd(start, duration);
+  var finish = new Date(doc.parseDate(task.Finish));
   var durationFormat = doc.getDurationFormat(task);
-  return doc.formatDuration(start, end, durationFormat);
+  return doc.formatDuration(start, finish, durationFormat);
 }
 var gantTChart = new GantTChart({
   container: gEl("workarea"),
