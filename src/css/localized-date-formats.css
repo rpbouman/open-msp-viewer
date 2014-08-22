@@ -1,39 +1,47 @@
-div.localized-date {
-  width: 5em;
+div.formatted-date {
+  width: 5.2em;
 }
 
-/*
-*     en: dd/mm/yyyy
-*/
-html > body.language-en div.localized-date > span.localized-date-year {
-  float: right;
+.date-part-separator-dot div.formatted-date > span:after {
+  content: ".";
 }
-html > body.language-en div.localized-date > span.localized-date-month {
-}
-html > body.language-en div.localized-date > span.localized-date-month:after {
-  content: "/";
-}
-html > body.language-en div.localized-date > span.localized-date-day {
-  float: left;
-}
-html > body.language-en div.localized-date > span.localized-date-day:after {
+
+.date-part-separator-slash div.formatted-date > span:after {
   content: "/";
 }
 
-/*
-*     en-US: mm/dd/yyyy
-*/
-html > body.language-en-us div.localized-date > span.localized-date-year {
+.date-part-separator-dash div.formatted-date > span:after {
+  content: "-";
+}
+
+/* Year */
+.date-part-order-DMY div.formatted-date > span.formatted-date-year,
+.date-part-order-MDY div.formatted-date > span.formatted-date-year {
   float: right;
 }
-html > body.language-en-us div.localized-date > span.localized-date-month {
+.date-part-order-DMY div.formatted-date > span.formatted-date-year:after,
+.date-part-order-MDY div.formatted-date > span.formatted-date-year:after {
+  content: "" !important;
+}
+
+.date-part-order-YMD div.formatted-date > span.formatted-date-year {
   float: left;
 }
-html > body.language-en-us div.localized-date > span.localized-date-month:after {
-  content: "/";
+
+/* Day */
+.date-part-order-YMD div.formatted-date > span.formatted-date-day {
+  float: right;
 }
-html > body.language-en-us div.localized-date > span.localized-date-day {
+.date-part-order-YMD div.formatted-date > span.formatted-date-day:after {
+  content: "" !important;
 }
-html > body.language-en-us div.localized-date > span.localized-date-day:after {
-  content: "/";
+
+.date-part-order-DMY div.formatted-date > span.formatted-date-day {
+  float: left;
 }
+
+/* Month */
+.date-part-order-MDY div.formatted-date > span.formatted-date-month {
+  float: left;
+}
+

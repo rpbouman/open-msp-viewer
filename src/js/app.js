@@ -23,8 +23,6 @@ linkCss(cssDir + "app.css");
 var spinner = new Spinner();
 spinner.show();
 
-body.className += ("language-" + (navigator.userLanguage || navigator.language)).toLowerCase();
-
 var dnd = new DDHandler({
   node: body
 });

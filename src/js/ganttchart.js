@@ -683,16 +683,16 @@ adopt(GantTChartComponent, ContentPane);
   createTaskBarFinishDateLabel: function(cell, document, task) {
     var finishDate = new Date(document.parseDate(task.Finish));
     var taskBarFinishDateLabel = cEl("div", {
-        "class": "task-bar-finish localized-date"
+        "class": "task-bar-finish formatted-date"
     }, [
       cEl("span", {
-        "class": "localized-date-year"
+        "class": "formatted-date-year"
       }, finishDate.getUTCFullYear()),
       cEl("span", {
-        "class": "localized-date-month"
+        "class": "formatted-date-month"
       }, 1+finishDate.getUTCMonth()),
       cEl("span", {
-        "class": "localized-date-day"
+        "class": "formatted-date-day"
       }, finishDate.getUTCDate())
     ], cell);
   },
