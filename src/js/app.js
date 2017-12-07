@@ -213,4 +213,6 @@ listen(window, "resize", function(){
 
 //
 spinner.hide();
+
+loadFromHttp("../../sample/3PointPlan-example.xml");
 })()
