@@ -113,6 +113,10 @@ function handleHttpOpen(){
     sampleUrl
   );
   if (url === null) return;
+  loadFromHttp(url);
+}
+
+function loadFromHttp(url){
   spinner.show();
   ajax({
     url: url,
